@@ -2,6 +2,7 @@
 
 [![Version](https://img.shields.io/crates/v/xapi.svg)](https://crates.io/crates/xapi)
 [![Build](https://img.shields.io/github/actions/workflow/status/pawelkn/xapi/test.yml)](https://github.com/pawelkn/xapi-rs/actions/workflows/test.yml)
+[![Docs](https://img.shields.io/docsrs/openai_dive)](https://docs.rs/openai_dive)
 [![Downloads](https://img.shields.io/crates/d/xapi.svg)](https://crates.io/crates/xapi)
 [![license](https://img.shields.io/badge/license-MIT-blue)](https://github.com/pawelkn/xapi-rs/LICENSE)
 
