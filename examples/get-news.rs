@@ -1,8 +1,5 @@
 use xapi;
 
-use chrono::prelude::*;
-use chrono::Utc;
-
 use std::error::Error;
 use std::fs;
 
@@ -13,14 +10,8 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
     let x = xapi::connect(&credentials).await?;
 
-    let start = Utc
-        .with_ymd_and_hms(2023, 11, 28, 0, 0, 0)
-        .unwrap()
-        .timestamp_millis();
-    let end = Utc
-        .with_ymd_and_hms(2024, 1, 28, 0, 0, 0)
-        .unwrap()
-        .timestamp_millis();
+    let start = 1701126000000; // 2023-11-28 00:00:00
+    let end = 1706396400000; // 2024-01-28 00:00:00
 
     let response = x.socket.get_news(start, end).await?;
     println!("{:?}", response.return_data);

@@ -1,9 +1,8 @@
 use xapi;
 
-use chrono::Utc;
-
 use std::error::Error;
 use std::fs;
+use std::time::{SystemTime, UNIX_EPOCH};
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
@@ -13,7 +12,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let x = xapi::connect(&credentials).await?;
 
     let symbols = vec!["BITCOIN", "ETHEREUM"];
-    let timestamp = Utc::now().timestamp_millis() - 60000;
+    let timestamp = SystemTime::now().duration_since(UNIX_EPOCH)?.as_millis() as i64 - 60000;
 
     let response = x.socket.get_tick_prices(symbols, timestamp, 0).await?;
     println!("{:?}", response.return_data);
