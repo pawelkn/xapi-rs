@@ -1,7 +1,7 @@
 # xStation5 API Rust Library
 
-[![Github Actions](https://github.com/pawelkn/xapi/actions/workflows/test.yml/badge.svg)](https://github.com/pawelkn/xapi/actions/workflows/test.yml)
-[![license](https://img.shields.io/badge/license-MIT-blue)](https://github.com/pawelkn/xapi/LICENSE)
+[![Github Actions](https://github.com/pawelkn/xapi-rs/actions/workflows/test.yml/badge.svg)](https://github.com/pawelkn/xapi-rs/actions/workflows/test.yml)
+[![license](https://img.shields.io/badge/license-MIT-blue)](https://github.com/pawelkn/xapi-rs/LICENSE)
 
 The xStation5 API Rust library provides a simple and easy-to-use API for interacting with the xStation5 trading platform. With this library, you can connect to the xStation5 platform, retrieve market data, and execute trades.
 
@@ -141,7 +141,7 @@ cargo run --example listen-tick-prices
 This will run all of the unit tests:
 
 ```shell
-git clone https://github.com/pawelkn/xapi.git
+git clone https://github.com/pawelkn/xapi-rs.git
 cd xapi
 cargo test
 ```
