@@ -7,7 +7,7 @@ description = "The xStation5 API Rust library"
 license = "MIT"
 repository = "https://github.com/pawelkn/xapi-rs"
 readme = "README.md"
-keywords = ["rust", "bitcoin", "trading", "websocket", "trading-api", "forex", "xapi", "forex-trading", "exchange-api", "forex-data", "xstation", "xstation5", "xtb", "xopenhub", "forex-api", "xopenhub-api", "xtb-api", "xstation-api", "x-trade-brokers", "bfbcapital"]
+keywords = ["xapi-rs", "xstation", "xstation5", "xtb", "xtb-api"]
 categories = ["api-bindings"]
 
 [dependencies]
