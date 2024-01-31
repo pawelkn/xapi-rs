@@ -1,6 +1,6 @@
 [package]
 name = "xapi"
-version = "0.0.1"
+version = "0.0.2"
 edition = "2021"
 authors = ["Paweł Knioła"]
 description = "The xStation5 API Rust library"
