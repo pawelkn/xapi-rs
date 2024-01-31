@@ -133,6 +133,8 @@ Before running the examples, you should create a file called _credentials.json_ 
 Once you have created the _credentials.json_ file, you can run an example using the following command:
 
 ```shell
+git clone https://github.com/pawelkn/xapi-rs.git
+cd xapi-rs
 cargo run --example listen-tick-prices
 ```
 
@@ -142,7 +144,7 @@ This will run all of the unit tests:
 
 ```shell
 git clone https://github.com/pawelkn/xapi-rs.git
-cd xapi
+cd xapi-rs
 cargo test
 ```
 
