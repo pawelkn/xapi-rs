@@ -1,6 +1,8 @@
 # xStation5 API Rust Library
 
-[![Github Actions](https://github.com/pawelkn/xapi-rs/actions/workflows/test.yml/badge.svg)](https://github.com/pawelkn/xapi-rs/actions/workflows/test.yml)
+[![Version](https://img.shields.io/crates/v/xapi.svg)](https://crates.io/crates/xapi)
+[![Build](https://img.shields.io/github/actions/workflow/status/pawelkn/xapi/test.yml)](https://github.com/pawelkn/xapi-rs/actions/workflows/test.yml)
+[![Downloads](https://img.shields.io/crates/d/xapi.svg)](https://crates.io/crates/xapi)
 [![license](https://img.shields.io/badge/license-MIT-blue)](https://github.com/pawelkn/xapi-rs/LICENSE)
 
 The xStation5 API Rust library provides a simple and easy-to-use API for interacting with the xStation5 trading platform. With this library, you can connect to the xStation5 platform, retrieve market data, and execute trades.
@@ -15,7 +17,7 @@ This xStation5 API Rust library is not affiliated with, endorsed by, or in any w
 
 ## Installation
 
-You can install xAPI using pip. Simply run the following command:
+You can install xAPI using cargo. Simply run the following command:
 
 ```shell
 cargo add xapi
@@ -133,8 +135,6 @@ Before running the examples, you should create a file called _credentials.json_ 
 Once you have created the _credentials.json_ file, you can run an example using the following command:
 
 ```shell
-git clone https://github.com/pawelkn/xapi-rs.git
-cd xapi-rs
 cargo run --example listen-tick-prices
 ```
 
