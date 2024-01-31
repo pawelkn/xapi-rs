@@ -1,0 +1,118 @@
+use crate::data::ErrorResponse;
+use crate::error::Error;
+
+use futures::{SinkExt, StreamExt};
+use futures_util::stream::{SplitSink, SplitStream};
+use serde::de::DeserializeOwned;
+use std::ops::Deref;
+use std::sync::Arc;
+use std::time::Instant;
+
+use tokio::net::TcpStream;
+use tokio::sync::Mutex;
+use tokio::time::{sleep, timeout, Duration};
+
+use tokio_tungstenite::tungstenite::protocol::Message;
+use tokio_tungstenite::{MaybeTlsStream, WebSocketStream};
+
+const PING_INTERVAL: Duration = Duration::from_secs(5);
+
+#[derive(Debug, Clone)]
+pub struct Connection {
+    write: Arc<Mutex<SplitSink<WebSocketStream<MaybeTlsStream<TcpStream>>, Message>>>,
+    read: Arc<Mutex<SplitStream<WebSocketStream<MaybeTlsStream<TcpStream>>>>>,
+    last_request_time: Arc<Mutex<Option<Instant>>>,
+    transaction: Arc<Mutex<()>>,
+}
+
+impl Connection {
+    pub async fn connect(url: &str) -> Result<Connection, Error> {
+        let (ws_stream, _) = tokio_tungstenite::connect_async(url).await?;
+        let (write, read) = ws_stream.split();
+
+        let conn = Connection {
+            write: Arc::new(Mutex::new(write)),
+            read: Arc::new(Mutex::new(read)),
+            last_request_time: Arc::new(Mutex::new(None)),
+            transaction: Arc::new(Mutex::new(())),
+        };
+
+        let c = conn.clone();
+        tokio::spawn(async move {
+            c.ping_task().await;
+        });
+
+        Ok(conn)
+    }
+
+    pub async fn skip_delay(&self) {
+        let mut last_request_time = self.last_request_time.lock().await;
+        *last_request_time = None;
+    }
+
+    pub async fn transaction<T: DeserializeOwned>(&self, command: &str) -> Result<T, Error> {
+        let _transaction = self.transaction.lock().await;
+        self.request(command).await?;
+        let response = self.receive().await?;
+
+        if let Ok(response) = serde_json::from_str::<ErrorResponse>(&response) {
+            return Err(Error::ErrorReceived { response });
+        }
+
+        let response = serde_json::from_str::<T>(&response)?;
+        Ok(response)
+    }
+
+    pub async fn request(&self, command: &str) -> Result<(), Error> {
+        let mut last_request_time = self.last_request_time.lock().await;
+        if let Some(last_request_time) = last_request_time.deref() {
+            let elapsed = last_request_time.elapsed();
+            if elapsed < Duration::from_millis(200) {
+                sleep(Duration::from_millis(200) - elapsed).await;
+            }
+        }
+
+        let mut write = self.write.lock().await;
+        write.send(Message::Text(String::from(command))).await?;
+        *last_request_time = Some(Instant::now());
+
+        Ok(())
+    }
+
+    pub async fn receive(&self) -> Result<String, Error> {
+        let mut read = self.read.lock().await;
+        loop {
+            let result = match timeout(PING_INTERVAL * 3, read.next()).await {
+                Ok(result) => result,
+                Err(_) => return Err(Error::PingTimeout),
+            };
+
+            let message = match result {
+                Some(data) => data?,
+                None => return Err(Error::NoDataReceived),
+            };
+
+            return match message {
+                Message::Text(string) => Ok(string),
+                Message::Binary(_) | Message::Ping(_) | Message::Pong(_) => continue,
+                Message::Close(_) => Err(Error::ConnectionClosed),
+            };
+        }
+    }
+
+    async fn ping_task(&self) {
+        loop {
+            // Stop pinging, if this is the last remaining write object
+            // the connection has been dropped and it is a dangling task
+            if Arc::strong_count(&self.write) == 1 {
+                return;
+            }
+
+            let mut write = self.write.lock().await;
+            write.send(Message::Ping(Vec::new())).await.ok();
+
+            drop(write); // unlock write object, before sleep
+            sleep(PING_INTERVAL).await;
+        }
+    }
+}
