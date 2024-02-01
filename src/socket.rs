@@ -11,10 +11,7 @@ pub struct Socket {
 
 impl Socket {
     pub async fn connect(url: &str, safe: bool) -> Result<Socket, Error> {
-        Ok(Socket {
-            conn: Connection::connect(url).await?,
-            safe,
-        })
+        Ok(Socket { conn: Connection::connect(url).await?, safe })
     }
 
     pub async fn skip_delay(&self) {
@@ -35,9 +32,7 @@ impl Socket {
     }
 
     pub async fn get_all_symbols(&self) -> Result<Response<Vec<Symbol>>, Error> {
-        self.conn
-            .transaction("{\"command\":\"getAllSymbols\"}")
-            .await
+        self.conn.transaction("{\"command\":\"getAllSymbols\"}").await
     }
 
     pub async fn get_calendar(&self) -> Result<Response<Vec<Calendar>>, Error> {
@@ -74,30 +69,20 @@ impl Socket {
             .await
     }
 
-    pub async fn get_commission_def(
-        &self,
-        symbol: &str,
-        volume: f64,
-    ) -> Result<Response<CommissionDef>, Error> {
+    pub async fn get_commission_def(&self, symbol: &str, volume: f64) -> Result<Response<CommissionDef>, Error> {
         self.conn
             .transaction(&format!(
-                "{{\"command\":\"getCommissionDef\",\"arguments\":{{\"symbol\":\"{}\",\"volume\":{}}}}}",
+                "{{\"command\":\"getCommissionDef\",\"arguments\":{{\"symbol\":\"{}\",\"volume\":{:.6}}}}}",
                 symbol, volume
             ))
             .await
     }
 
     pub async fn get_current_user_data(&self) -> Result<Response<CurrentUserData>, Error> {
-        self.conn
-            .transaction("{\"command\":\"getCurrentUserData\"}")
-            .await
+        self.conn.transaction("{\"command\":\"getCurrentUserData\"}").await
     }
 
-    pub async fn get_ibs_history(
-        &self,
-        start: i64,
-        end: i64,
-    ) -> Result<Response<Vec<IBData>>, Error> {
+    pub async fn get_ibs_history(&self, start: i64, end: i64) -> Result<Response<Vec<IBData>>, Error> {
         self.conn
             .transaction(&format!(
                 "{{\"command\":\"getIbsHistory\",\"arguments\":{{\"end\":{},\"start\":{}}}}}",
@@ -107,19 +92,13 @@ impl Socket {
     }
 
     pub async fn get_margin_level(&self) -> Result<Response<MarginLevel>, Error> {
-        self.conn
-            .transaction("{\"command\":\"getMarginLevel\"}")
-            .await
+        self.conn.transaction("{\"command\":\"getMarginLevel\"}").await
     }
 
-    pub async fn get_margin_trade(
-        &self,
-        symbol: &str,
-        volume: f64,
-    ) -> Result<Response<MarginTrade>, Error> {
+    pub async fn get_margin_trade(&self, symbol: &str, volume: f64) -> Result<Response<MarginTrade>, Error> {
         self.conn
             .transaction(&format!(
-                "{{\"command\":\"getMarginTrade\",\"arguments\":{{\"symbol\":\"{}\",\"volume\":{}}}}}",
+                "{{\"command\":\"getMarginTrade\",\"arguments\":{{\"symbol\":\"{}\",\"volume\":{:.6}}}}}",
                 symbol, volume
             ))
             .await
@@ -144,22 +123,18 @@ impl Socket {
     ) -> Result<Response<ProfitCalculation>, Error> {
         self.conn
             .transaction(&format!(
-                "{{\"command\":\"getProfitCalculation\",\"arguments\":{{\"closePrice\":{},\"cmd\":{},\"openPrice\":{},\"symbol\":\"{}\",\"volume\":{}}}}}",
+                "{{\"command\":\"getProfitCalculation\",\"arguments\":{{\"closePrice\":{:.6},\"cmd\":{},\"openPrice\":{:.6},\"symbol\":\"{}\",\"volume\":{:.6}}}}}",
                 close_price, cmd as i64, open_price, symbol, volume
             ))
             .await
     }
 
     pub async fn get_server_time(&self) -> Result<Response<ServerTime>, Error> {
-        self.conn
-            .transaction("{\"command\":\"getServerTime\"}")
-            .await
+        self.conn.transaction("{\"command\":\"getServerTime\"}").await
     }
 
     pub async fn get_step_rules(&self) -> Result<Response<Vec<StepRule>>, Error> {
-        self.conn
-            .transaction("{\"command\":\"getStepRules\"}")
-            .await
+        self.conn.transaction("{\"command\":\"getStepRules\"}").await
     }
 
     pub async fn get_symbol(&self, symbol: &str) -> Result<Response<Symbol>, Error> {
@@ -180,7 +155,8 @@ impl Socket {
         self.conn
             .transaction(&format!(
                 "{{\"command\":\"getTickPrices\",\"arguments\":{{\"level\":{},\"symbols\":[{}],\"timestamp\":{}}}}}",
-                level, symbols
+                level,
+                symbols
                     .iter()
                     .map(|s| format!("\"{}\"", s))
                     .collect::<Vec<String>>()
@@ -194,11 +170,7 @@ impl Socket {
         self.conn
             .transaction(&format!(
                 "{{\"command\":\"getTradeRecords\",\"arguments\":{{\"orders\":[{}]}}}}",
-                orders
-                    .iter()
-                    .map(|x| x.to_string())
-                    .collect::<Vec<String>>()
-                    .join(",")
+                orders.iter().map(|x| x.to_string()).collect::<Vec<String>>().join(",")
             ))
             .await
     }
@@ -212,11 +184,7 @@ impl Socket {
             .await
     }
 
-    pub async fn get_trades_history(
-        &self,
-        start: i64,
-        end: i64,
-    ) -> Result<Response<Vec<Trade>>, Error> {
+    pub async fn get_trades_history(&self, start: i64, end: i64) -> Result<Response<Vec<Trade>>, Error> {
         self.conn
             .transaction(&format!(
                 "{{\"command\":\"getTradesHistory\",\"arguments\":{{\"end\":{},\"start\":{}}}}}",
@@ -225,10 +193,7 @@ impl Socket {
             .await
     }
 
-    pub async fn get_trading_hours(
-        &self,
-        symbols: Vec<&str>,
-    ) -> Result<Response<Vec<TradingHours>>, Error> {
+    pub async fn get_trading_hours(&self, symbols: Vec<&str>) -> Result<Response<Vec<TradingHours>>, Error> {
         self.conn
             .transaction(&format!(
                 "{{\"command\":\"getTradingHours\",\"arguments\":{{\"symbols\":[{}]}}}}",
@@ -249,26 +214,20 @@ impl Socket {
         self.conn.transaction("{\"command\":\"ping\"}").await
     }
 
-    pub async fn trade_transaction(
-        &self,
-        transaction: Transaction,
-    ) -> Result<Response<Order>, Error> {
+    pub async fn trade_transaction(&self, transaction: Transaction) -> Result<Response<Order>, Error> {
         if self.safe == true {
             return Err(Error::TradingIsDisabled);
         }
 
         self.conn
             .transaction(&format!(
-                "{{\"command\":\"tradeTransaction\",\"arguments\":{{\"tradeTransInfo\":{{\"cmd\":{},\"customComment\":\"{}\",\"expiration\":{},\"offset\":{},\"order\":{},\"price\":{},\"sl\":{},\"symbol\":\"{}\",\"tp\":{},\"type\":{},\"volume\":{}}}}}}}",
+                "{{\"command\":\"tradeTransaction\",\"arguments\":{{\"tradeTransInfo\":{{\"cmd\":{},\"customComment\":\"{}\",\"expiration\":{},\"offset\":{},\"order\":{},\"price\":{:.6},\"sl\":{:.6},\"symbol\":\"{}\",\"tp\":{:.6},\"type\":{},\"volume\":{:.6}}}}}}}",
                 transaction.cmd as i64, transaction.custom_comment, transaction.expiration, transaction.offset, transaction.order, transaction.price, transaction.sl, transaction.symbol, transaction.tp, transaction.type_ as i64, transaction.volume
             ))
             .await
     }
 
-    pub async fn trade_transaction_status(
-        &self,
-        order: i64,
-    ) -> Result<Response<TradeStatus>, Error> {
+    pub async fn trade_transaction_status(&self, order: i64) -> Result<Response<TradeStatus>, Error> {
         self.conn
             .transaction(&format!(
                 "{{\"command\":\"tradeTransactionStatus\",\"arguments\":{{\"order\":{}}}}}",

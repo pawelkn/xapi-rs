@@ -2,33 +2,33 @@ use crate::enums::*;
 
 use serde::Deserialize;
 
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Deserialize, Clone, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct Response<T> {
     pub status: bool,
     pub return_data: T,
 }
 
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Deserialize, Clone, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct LoginResponse {
     pub status: bool,
     pub stream_session_id: String,
 }
 
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Deserialize, Clone, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct LogoutResponse {
     pub status: bool,
 }
 
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Deserialize, Clone, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct PingResponse {
     pub status: bool,
 }
 
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Deserialize, Clone, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct ErrorResponse {
     pub status: bool,
@@ -42,12 +42,13 @@ pub enum Record {
     Candle(Candle),
     KeepAlive(KeepAlive),
     News(News),
+    Profit(Profit),
     Tick(Tick),
     Trade(Trade),
     TradeStatus(TradeStatus),
 }
 
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Deserialize, Clone, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct Balance {
     pub balance: f64,
@@ -58,27 +59,27 @@ pub struct Balance {
     pub margin_level: f64,
 }
 
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Deserialize, Clone, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct Candle {
     pub close: f64,
-    pub ctm: f64,
+    pub ctm: i64,
     pub ctm_string: String,
     pub high: f64,
     pub low: f64,
     pub open: f64,
-    pub quote_id: f64,
+    pub quote_id: i64,
     pub symbol: String,
     pub vol: f64,
 }
 
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Deserialize, Clone, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct KeepAlive {
     pub timestamp: i64,
 }
 
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Deserialize, Clone, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct News {
     pub body: String,
@@ -87,24 +88,33 @@ pub struct News {
     pub title: String,
 }
 
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Deserialize, Clone, Default)]
+#[serde(rename_all = "camelCase")]
+pub struct Profit {
+    pub order: i64,
+    pub order2: i64,
+    pub position: i64,
+    pub profit: f64,
+}
+
+#[derive(Debug, Deserialize, Clone, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct Tick {
     pub ask: f64,
-    pub ask_volume: f64,
+    pub ask_volume: i64,
     pub bid: f64,
-    pub bid_volume: f64,
+    pub bid_volume: i64,
     pub high: f64,
-    pub level: f64,
+    pub level: i64,
     pub low: f64,
-    pub quote_id: Option<f64>,
+    pub quote_id: Option<i64>,
     pub spread_raw: f64,
     pub spread_table: f64,
     pub symbol: String,
     pub timestamp: i64,
 }
 
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Deserialize, Clone, Default)]
 pub struct Trade {
     pub close_price: f64,
     pub close_time: Option<i64>,
@@ -124,7 +134,7 @@ pub struct Trade {
     pub open_price: f64,
     pub open_time: i64,
     #[serde(rename = "open_timeString")]
-    pub open_time_string: String,
+    pub open_time_string: Option<String>,
     pub order: i64,
     pub order2: i64,
     pub position: i64,
@@ -139,7 +149,7 @@ pub struct Trade {
     pub volume: f64,
 }
 
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Deserialize, Clone, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct TradeStatus {
     pub ask: Option<f64>,
@@ -151,48 +161,49 @@ pub struct TradeStatus {
     pub request_status: RequestStatus,
 }
 
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Deserialize, Clone, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct Symbol {
     pub ask: f64,
     pub bid: f64,
     pub category_name: String,
-    pub contract_size: f64,
+    pub contract_size: i64,
     pub currency: String,
     pub currency_pair: bool,
     pub currency_profit: String,
     pub description: String,
-    pub expiration: Option<String>,
+    pub expiration: Option<i64>,
     pub group_name: String,
     pub high: f64,
-    pub initial_margin: f64,
-    pub instant_max_volume: f64,
+    pub initial_margin: i64,
+    pub instant_max_volume: i64,
     pub leverage: f64,
     pub long_only: bool,
     pub lot_max: f64,
     pub lot_min: f64,
     pub lot_step: f64,
     pub low: f64,
-    pub margin_hedged: f64,
+    pub margin_hedged: i64,
     pub margin_hedged_strong: bool,
-    pub margin_maintenance: Option<f64>,
-    pub margin_mode: f64,
+    pub margin_maintenance: Option<i64>,
+    pub margin_mode: i64,
     pub percentage: f64,
-    pub precision: f64,
-    pub profit_mode: f64,
-    pub quote_id: f64,
+    pub pips_precision: Option<i64>,
+    pub precision: i64,
+    pub profit_mode: i64,
+    pub quote_id: i64,
     pub short_selling: bool,
     pub spread_raw: f64,
     pub spread_table: f64,
-    pub starting: Option<String>,
-    pub step_rule_id: f64,
-    pub stops_level: f64,
+    pub starting: Option<i64>,
+    pub step_rule_id: i64,
+    pub stops_level: i64,
     #[serde(rename = "swap_rollover3days")]
-    pub swap_rollover3days: f64,
+    pub swap_rollover3days: i64,
     pub swap_enable: bool,
     pub swap_long: f64,
     pub swap_short: f64,
-    pub swap_type: f64,
+    pub swap_type: i64,
     pub symbol: String,
     pub tick_size: f64,
     pub tick_value: f64,
@@ -202,7 +213,7 @@ pub struct Symbol {
     pub type_: i64,
 }
 
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Deserialize, Clone, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct Calendar {
     pub country: String,
@@ -215,14 +226,14 @@ pub struct Calendar {
     pub title: String,
 }
 
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Deserialize, Clone, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct ChartRateInfo {
     pub digits: i64,
     pub rate_infos: Vec<RateInfo>,
 }
 
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Deserialize, Clone, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct RateInfo {
     pub close: f64,
@@ -234,14 +245,14 @@ pub struct RateInfo {
     pub vol: f64,
 }
 
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Deserialize, Clone, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct CommissionDef {
     pub commission: Option<f64>,
     pub rate_of_exchange: Option<f64>,
 }
 
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Deserialize, Clone, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct CurrentUserData {
     pub company_unit: i64,
@@ -254,7 +265,7 @@ pub struct CurrentUserData {
     pub trailing_stop: bool,
 }
 
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Deserialize, Clone, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct IBData {
     pub close_price: Option<f64>,
@@ -268,7 +279,7 @@ pub struct IBData {
     pub volume: Option<f64>,
 }
 
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Deserialize, Clone, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct MarginLevel {
     pub balance: f64,
@@ -282,26 +293,26 @@ pub struct MarginLevel {
     pub margin_level: f64,
 }
 
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Deserialize, Clone, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct MarginTrade {
     pub margin: f64,
 }
 
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Deserialize, Clone, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct ProfitCalculation {
     pub profit: f64,
 }
 
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Deserialize, Clone, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct ServerTime {
     pub time: i64,
     pub time_string: String,
 }
 
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Deserialize, Clone, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct StepRule {
     pub id: i64,
@@ -309,20 +320,20 @@ pub struct StepRule {
     pub steps: Vec<Step>,
 }
 
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Deserialize, Clone, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct Step {
     pub from_value: f64,
     pub step: f64,
 }
 
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Deserialize, Clone, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct TickPrices {
     pub quotations: Vec<Tick>,
 }
 
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Deserialize, Clone, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct TradingHours {
     pub quotes: Vec<Quote>,
@@ -330,7 +341,7 @@ pub struct TradingHours {
     pub trading: Vec<Trading>,
 }
 
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Deserialize, Clone, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct Quote {
     pub day: i64,
@@ -338,7 +349,7 @@ pub struct Quote {
     pub to_t: i64,
 }
 
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Deserialize, Clone, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct Trading {
     pub day: i64,
@@ -346,7 +357,7 @@ pub struct Trading {
     pub to_t: i64,
 }
 
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Deserialize, Clone, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct Version {
     pub version: String,
@@ -368,7 +379,7 @@ pub struct Transaction {
     pub volume: f64,
 }
 
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Deserialize, Clone, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct Order {
     pub order: i64,

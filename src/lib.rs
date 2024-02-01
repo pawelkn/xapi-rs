@@ -29,9 +29,7 @@ pub async fn connect(credentials: &Credentials) -> Result<XApi, Error> {
     let stream_url = format!("{}/{}Stream", &host, &credentials.type_);
 
     let socket = Socket::connect(&socket_url, credentials.safe).await?;
-    let login = socket
-        .login(&credentials.account_id, &credentials.password)
-        .await?;
+    let login = socket.login(&credentials.account_id, &credentials.password).await?;
 
     let stream = Stream::connect(&stream_url, login.stream_session_id).await?;
 

@@ -13,10 +13,7 @@ pub struct Stream {
 
 impl Stream {
     pub async fn connect(url: &str, stream_session_id: String) -> Result<Stream, Error> {
-        Ok(Stream {
-            conn: Connection::connect(url).await?,
-            stream_session_id,
-        })
+        Ok(Stream { conn: Connection::connect(url).await?, stream_session_id })
     }
 
     pub async fn skip_delay(&self) {
@@ -47,9 +44,7 @@ impl Stream {
 
     pub async fn stop_candles(&self, symbol: &str) -> Result<(), Error> {
         self.conn
-            .request(&format!(
-                "{{\"command\":\"stopCandles\",\"symbol\":\"{symbol}\"}}",
-            ))
+            .request(&format!("{{\"command\":\"stopCandles\",\"symbol\":\"{symbol}\"}}"))
             .await
     }
 
@@ -69,7 +64,7 @@ impl Stream {
     pub async fn get_news(&self) -> Result<(), Error> {
         self.conn
             .request(&format!(
-                "{{\"command\":\"getNews\",\"streamSessionId\":\"{}\",}}",
+                "{{\"command\":\"getNews\",\"streamSessionId\":\"{}\"}}",
                 self.stream_session_id
             ))
             .await
@@ -82,7 +77,7 @@ impl Stream {
     pub async fn get_profits(&self) -> Result<(), Error> {
         self.conn
             .request(&format!(
-                "{{\"command\":\"getProfits\",\"streamSessionId\":\"{}\",}}",
+                "{{\"command\":\"getProfits\",\"streamSessionId\":\"{}\"}}",
                 self.stream_session_id
             ))
             .await
@@ -92,12 +87,7 @@ impl Stream {
         self.conn.request("{\"command\":\"stopProfits\"}").await
     }
 
-    pub async fn get_tick_prices(
-        &self,
-        symbol: &str,
-        min_arrival_time: isize,
-        max_level: isize,
-    ) -> Result<(), Error> {
+    pub async fn get_tick_prices(&self, symbol: &str, min_arrival_time: i64, max_level: i64) -> Result<(), Error> {
         self.conn
             .request(&format!(
                 "{{\"command\":\"getTickPrices\",\"streamSessionId\":\"{}\",\"symbol\":\"{}\",\"minArrivalTime\":{},\"maxLevel\":{}}}",
@@ -108,17 +98,14 @@ impl Stream {
 
     pub async fn stop_tick_prices(&self, symbol: &str) -> Result<(), Error> {
         self.conn
-            .request(&format!(
-                "{{\"command\":\"stopTickPrices\",\"symbol\":\"{}\"}}",
-                symbol
-            ))
+            .request(&format!("{{\"command\":\"stopTickPrices\",\"symbol\":\"{}\"}}", symbol))
             .await
     }
 
     pub async fn get_trades(&self) -> Result<(), Error> {
         self.conn
             .request(&format!(
-                "{{\"command\":\"getTrades\",\"streamSessionId\":\"{}\",}}",
+                "{{\"command\":\"getTrades\",\"streamSessionId\":\"{}\"}}",
                 self.stream_session_id
             ))
             .await
@@ -131,7 +118,7 @@ impl Stream {
     pub async fn get_trade_status(&self) -> Result<(), Error> {
         self.conn
             .request(&format!(
-                "{{\"command\":\"getTradeStatus\",\"streamSessionId\":\"{}\",}}",
+                "{{\"command\":\"getTradeStatus\",\"streamSessionId\":\"{}\"}}",
                 self.stream_session_id
             ))
             .await
@@ -173,8 +160,9 @@ impl Stream {
             "candle" => Ok(Record::Candle(from::<Candle>(&record)?)),
             "keepAlive" => Ok(Record::KeepAlive(from::<KeepAlive>(&record)?)),
             "news" => Ok(Record::News(from::<News>(&record)?)),
+            "profit" => Ok(Record::Profit(from::<Profit>(&record)?)),
             "tickPrices" => Ok(Record::Tick(from::<Tick>(&record)?)),
-            "trades" => Ok(Record::Trade(from::<Trade>(&record)?)),
+            "trade" => Ok(Record::Trade(from::<Trade>(&record)?)),
             "tradeStatus" => Ok(Record::TradeStatus(from::<TradeStatus>(&record)?)),
             _ => Err(Error::UnknownRecord { record }),
         }

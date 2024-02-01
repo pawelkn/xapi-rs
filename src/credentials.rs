@@ -1,6 +1,6 @@
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Debug, Deserialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct Credentials {
     pub account_id: String,
@@ -10,9 +10,9 @@ pub struct Credentials {
     pub safe: bool,
 }
 
-impl Credentials {
-    pub fn default() -> Credentials {
-        Credentials {
+impl Default for Credentials {
+    fn default() -> Self {
+        Self {
             account_id: String::new(),
             password: String::new(),
             host: String::from("ws.xtb.com"),
@@ -20,7 +20,9 @@ impl Credentials {
             safe: false,
         }
     }
+}
 
+impl Credentials {
     pub fn loads(json: &str) -> Result<Credentials, serde_json::Error> {
         serde_json::from_str(json)
     }
