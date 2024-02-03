@@ -13,7 +13,7 @@ pub enum Error {
     #[error("Trading is disabled when safe=true")]
     TradingIsDisabled,
     #[error("Error received: {response:?}")]
-    ErrorReceived { response: ErrorResponse },
+    ErrorResponse { response: ErrorResponse },
     #[error("Unknown record: {record:?}")]
     UnknownRecord { record: String },
     #[error("JsonParseError: {0}")]

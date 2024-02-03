@@ -56,7 +56,7 @@ impl Connection {
         let response = self.receive().await?;
 
         if let Ok(response) = serde_json::from_str::<ErrorResponse>(&response) {
-            return Err(Error::ErrorReceived { response });
+            return Err(Error::ErrorResponse { response });
         }
 
         let response = serde_json::from_str::<T>(&response)?;
