@@ -37,10 +37,7 @@ impl Connection {
             transaction: Arc::new(Mutex::new(())),
         };
 
-        let c = conn.clone();
-        tokio::spawn(async move {
-            c.ping_task().await;
-        });
+        conn.spawn_pinging_task();
 
         Ok(conn)
     }
@@ -100,19 +97,16 @@ impl Connection {
         }
     }
 
-    async fn ping_task(&self) {
-        loop {
-            // Stop pinging, if this is the last remaining write object
-            // the connection has been dropped and it is a dangling task
-            if Arc::strong_count(&self.write) == 1 {
-                return;
+    fn spawn_pinging_task(&self) {
+        let write = Arc::downgrade(&self.write);
+        tokio::spawn(async move {
+            while let Some(write) = write.upgrade() {
+                let mut write = write.lock().await;
+                write.send(Message::Ping(Vec::new())).await.ok();
+
+                drop(write); // unlock write object, before sleep
+                sleep(PING_INTERVAL).await;
             }
-
-            let mut write = self.write.lock().await;
-            write.send(Message::Ping(Vec::new())).await.ok();
-
-            drop(write); // unlock write object, before sleep
-            sleep(PING_INTERVAL).await;
-        }
+        });
     }
 }
