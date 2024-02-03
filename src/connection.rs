@@ -81,7 +81,7 @@ impl Connection {
         loop {
             let result = match timeout(PING_INTERVAL * 3, read.next()).await {
                 Ok(result) => result,
-                Err(_) => return Err(Error::PingTimeout),
+                Err(_) => return Err(Error::ConnectionTimeout),
             };
 
             let message = match result {

@@ -6,8 +6,8 @@ use thiserror::Error;
 pub enum Error {
     #[error("Connection closed")]
     ConnectionClosed,
-    #[error("Ping timeout")]
-    PingTimeout,
+    #[error("Connection timeout")]
+    ConnectionTimeout,
     #[error("No data received")]
     NoDataReceived,
     #[error("Trading is disabled when safe=true")]
