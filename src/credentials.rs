@@ -1,3 +1,4 @@
+use crate::error::Error;
 use serde::Deserialize;
 
 #[derive(Debug, Deserialize, Clone)]
@@ -23,8 +24,11 @@ impl Default for Credentials {
 }
 
 impl Credentials {
-    pub fn from(json: &str) -> Result<Credentials, serde_json::Error> {
-        serde_json::from_str(json)
+    pub fn from(json: &str) -> Result<Credentials, Error> {
+        match serde_json::from_str(json) {
+            Ok(credentials) => Ok(credentials),
+            Err(err) => Err(Error::JsonParseError(err)),
+        }
     }
 }
 
