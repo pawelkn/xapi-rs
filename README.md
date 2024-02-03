@@ -39,7 +39,7 @@ use std::fs;
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
     let json = fs::read_to_string("credentials.json")?;
-    let credentials = xapi::Credentials::loads(&json)?;
+    let credentials = xapi::Credentials::from(&json)?;
 
     let x = xapi::connect(&credentials).await?;
     Ok(())
@@ -72,7 +72,7 @@ async fn listen_tick_prices(credentials: &xapi::Credentials) -> Result<(), xapi:
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
     let json = fs::read_to_string("credentials.json")?;
-    let credentials = xapi::Credentials::loads(&json)?;
+    let credentials = xapi::Credentials::from(&json)?;
 
     while let Err(err) = listen_tick_prices(&credentials).await {
         println!("{}, Reconnecting in 5 seconds ...", err);
@@ -94,7 +94,7 @@ use std::fs;
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
     let json = fs::read_to_string("credentials.json")?;
-    let credentials = xapi::Credentials::loads(&json)?;
+    let credentials = xapi::Credentials::from(&json)?;
 
     let x = xapi::connect(&credentials).await?;
 

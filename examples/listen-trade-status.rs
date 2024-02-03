@@ -18,7 +18,7 @@ async fn listen_trade_status(credentials: &xapi::Credentials) -> Result<(), xapi
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
     let json = fs::read_to_string("credentials.json")?;
-    let credentials = xapi::Credentials::loads(&json)?;
+    let credentials = xapi::Credentials::from(&json)?;
 
     while let Err(err) = listen_trade_status(&credentials).await {
         println!("{}, Reconnecting in 5 seconds ...", err);

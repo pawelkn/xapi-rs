@@ -18,7 +18,7 @@ async fn listen_news(credentials: &xapi::Credentials) -> Result<(), xapi::Error>
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
     let json = fs::read_to_string("credentials.json")?;
-    let credentials = xapi::Credentials::loads(&json)?;
+    let credentials = xapi::Credentials::from(&json)?;
 
     while let Err(err) = listen_news(&credentials).await {
         println!("{}, Reconnecting in 5 seconds ...", err);

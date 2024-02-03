@@ -23,7 +23,7 @@ impl Default for Credentials {
 }
 
 impl Credentials {
-    pub fn loads(json: &str) -> Result<Credentials, serde_json::Error> {
+    pub fn from(json: &str) -> Result<Credentials, serde_json::Error> {
         serde_json::from_str(json)
     }
 }
@@ -50,7 +50,7 @@ mod tests {
             "safe": true
         }"#;
 
-        let creds = Credentials::loads(DATA);
+        let creds = Credentials::from(DATA);
         assert!(creds.is_ok());
 
         let creds = creds.unwrap();
