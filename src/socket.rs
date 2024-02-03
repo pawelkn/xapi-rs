@@ -3,6 +3,12 @@ use crate::data::*;
 use crate::enums::*;
 use crate::error::Error;
 
+macro_rules! trim {
+    ($num:expr) => {
+        format!("{:.10}", $num).trim_end_matches('0').trim_end_matches('.')
+    };
+}
+
 #[derive(Debug, Clone)]
 pub struct Socket {
     conn: Connection,
@@ -72,8 +78,9 @@ impl Socket {
     pub async fn get_commission_def(&self, symbol: &str, volume: f64) -> Result<Response<CommissionDef>, Error> {
         self.conn
             .transaction(&format!(
-                "{{\"command\":\"getCommissionDef\",\"arguments\":{{\"symbol\":\"{}\",\"volume\":{:.6}}}}}",
-                symbol, volume
+                "{{\"command\":\"getCommissionDef\",\"arguments\":{{\"symbol\":\"{}\",\"volume\":{}}}}}",
+                symbol,
+                trim!(volume)
             ))
             .await
     }
@@ -98,8 +105,9 @@ impl Socket {
     pub async fn get_margin_trade(&self, symbol: &str, volume: f64) -> Result<Response<MarginTrade>, Error> {
         self.conn
             .transaction(&format!(
-                "{{\"command\":\"getMarginTrade\",\"arguments\":{{\"symbol\":\"{}\",\"volume\":{:.6}}}}}",
-                symbol, volume
+                "{{\"command\":\"getMarginTrade\",\"arguments\":{{\"symbol\":\"{}\",\"volume\":{}}}}}",
+                symbol,
+                trim!(volume)
             ))
             .await
     }
@@ -123,8 +131,8 @@ impl Socket {
     ) -> Result<Response<ProfitCalculation>, Error> {
         self.conn
             .transaction(&format!(
-                "{{\"command\":\"getProfitCalculation\",\"arguments\":{{\"closePrice\":{:.6},\"cmd\":{},\"openPrice\":{:.6},\"symbol\":\"{}\",\"volume\":{:.6}}}}}",
-                close_price, cmd as i64, open_price, symbol, volume
+                "{{\"command\":\"getProfitCalculation\",\"arguments\":{{\"closePrice\":{},\"cmd\":{},\"openPrice\":{},\"symbol\":\"{}\",\"volume\":{}}}}}",
+                trim!(close_price), cmd as i64, trim!(open_price), symbol, trim!(volume)
             ))
             .await
     }
@@ -221,8 +229,8 @@ impl Socket {
 
         self.conn
             .transaction(&format!(
-                "{{\"command\":\"tradeTransaction\",\"arguments\":{{\"tradeTransInfo\":{{\"cmd\":{},\"customComment\":\"{}\",\"expiration\":{},\"offset\":{},\"order\":{},\"price\":{:.6},\"sl\":{:.6},\"symbol\":\"{}\",\"tp\":{:.6},\"type\":{},\"volume\":{:.6}}}}}}}",
-                transaction.cmd as i64, transaction.custom_comment, transaction.expiration, transaction.offset, transaction.order, transaction.price, transaction.sl, transaction.symbol, transaction.tp, transaction.type_ as i64, transaction.volume
+                "{{\"command\":\"tradeTransaction\",\"arguments\":{{\"tradeTransInfo\":{{\"cmd\":{},\"customComment\":\"{}\",\"expiration\":{},\"offset\":{},\"order\":{},\"price\":{},\"sl\":{},\"symbol\":\"{}\",\"tp\":{},\"type\":{},\"volume\":{}}}}}}}",
+                transaction.cmd as i64, transaction.custom_comment, transaction.expiration, transaction.offset, transaction.order, trim!(transaction.price), trim!(transaction.sl), transaction.symbol, trim!(transaction.tp), transaction.type_ as i64, trim!(transaction.volume)
             ))
             .await
     }
