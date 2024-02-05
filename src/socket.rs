@@ -20,10 +20,6 @@ impl Socket {
         Ok(Socket { conn: Connection::connect(url).await?, safe })
     }
 
-    pub async fn skip_delay(&self) {
-        self.conn.skip_delay().await;
-    }
-
     pub async fn login(&self, account_id: &str, password: &str) -> Result<LoginResponse, Error> {
         self.conn
             .transaction(&format!(
