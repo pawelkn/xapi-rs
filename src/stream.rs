@@ -16,6 +16,10 @@ impl Stream {
         Ok(Stream { conn: Connection::connect(url).await?, stream_session_id })
     }
 
+    pub async fn skip_delay(&self) {
+        self.conn.skip_delay().await;
+    }
+
     pub async fn get_balance(&self) -> Result<(), Error> {
         self.conn
             .request(&format!(
