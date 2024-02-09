@@ -1,6 +1,6 @@
 [package]
 name = "xapi"
-version = "0.2.1"
+version = "0.2.2"
 edition = "2021"
 authors = ["Paweł Knioła"]
 description = "The xStation5 API Rust library"
@@ -11,23 +11,11 @@ keywords = ["xapi-rs", "xstation", "xstation5", "xtb", "xtb-api"]
 categories = ["api-bindings"]
 
 [dependencies]
+futures = "^0.3"
+futures-util = { version = "^0.3", default-features = false, features = ["sink"] }
+log = "^0.4"
+serde = { version = "^1.0", features = ["derive"] }
 serde_json = "^1.0"
 thiserror = "^1.0"
-futures = "^0.3"
-
-[dependencies.tokio]
-version = "^1.35"
-features = ["rt-multi-thread", "sync", "time", "macros"]
-
-[dependencies.tokio-tungstenite]
-version = "^0.15"
-features = ["native-tls"]
-
-[dependencies.serde]
-version = "^1.0"
-features = ["derive"]
-
-[dependencies.futures-util]
-version = "^0.3"
-default-features = false
-features = ["sink"]
+tokio = { version = "^1.35", features = ["rt-multi-thread", "sync", "time", "macros"] }
+tokio-tungstenite = { version = "^0.15", features = ["native-tls"] }
