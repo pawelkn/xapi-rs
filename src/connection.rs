@@ -3,6 +3,7 @@ use crate::error::Error;
 
 use futures::{SinkExt, StreamExt};
 use futures_util::stream::{SplitSink, SplitStream};
+use log::*;
 use serde::de::DeserializeOwned;
 use std::ops::Deref;
 use std::sync::Arc;
@@ -72,6 +73,7 @@ impl Connection {
         let mut write = self.write.lock().await;
         write.send(Message::Text(String::from(command))).await?;
         *last_request_time = Some(Instant::now());
+        debug!("Sent: {:?}", command);
 
         Ok(())
     }
@@ -79,20 +81,21 @@ impl Connection {
     pub async fn receive(&self) -> Result<String, Error> {
         let mut read = self.read.lock().await;
         loop {
-            let result = match timeout(PING_INTERVAL * 3, read.next()).await {
-                Ok(result) => result,
+            let message = match timeout(PING_INTERVAL * 3, read.next()).await {
+                Ok(message) => message,
                 Err(_) => return Err(Error::ConnectionTimeout),
             };
 
-            let message = match result {
-                Some(data) => data?,
+            debug!("Received: {:?}", message);
+            let message = match message {
+                Some(message) => message?,
                 None => return Err(Error::NoDataReceived),
             };
 
-            return match message {
-                Message::Text(string) => Ok(string),
+            match message {
+                Message::Text(string) => return Ok(string),
                 Message::Binary(_) | Message::Ping(_) | Message::Pong(_) => continue,
-                Message::Close(_) => Err(Error::ConnectionClosed),
+                Message::Close(_) => return Err(Error::ConnectionClosed),
             };
         }
     }
@@ -103,6 +106,7 @@ impl Connection {
             while let Some(write) = write.upgrade() {
                 let mut write = write.lock().await;
                 write.send(Message::Ping(Vec::new())).await.ok();
+                debug!("Sent: Ping([])");
 
                 drop(write); // unlock write object, before sleep
                 sleep(PING_INTERVAL).await;
