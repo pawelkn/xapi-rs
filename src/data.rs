@@ -121,15 +121,17 @@ pub struct Trade {
     pub close_time_string: Option<String>,
     pub closed: bool,
     pub cmd: TradeCmd,
-    pub comment: String,
+    pub comment: Option<String>,
     pub commission: Option<f64>,
     #[serde(rename = "customComment")]
-    pub custom_comment: String,
+    pub custom_comment: Option<String>,
     pub digits: i64,
     pub expiration: Option<i64>,
     #[serde(rename = "expirationString")]
     pub expiration_string: Option<String>,
     pub margin_rate: f64,
+    #[serde(rename = "nominalValue")]
+    pub nominal_value: Option<f64>,
     pub offset: i64,
     pub open_price: f64,
     pub open_time: i64,
