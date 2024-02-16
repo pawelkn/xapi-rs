@@ -1,6 +1,6 @@
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Deserialize, Clone, Default)]
+#[derive(Debug, Deserialize, Serialize, Clone, Default)]
 #[serde(from = "i64")]
 pub enum TradeCmd {
     /// Buy
@@ -39,7 +39,7 @@ impl From<i64> for TradeCmd {
     }
 }
 
-#[derive(Debug, Deserialize, Clone, Default)]
+#[derive(Debug, Deserialize, Serialize, Clone, Default)]
 #[serde(from = "i64")]
 pub enum TradeType {
     /// Order open, used for opening orders
@@ -69,7 +69,7 @@ impl From<i64> for TradeType {
     }
 }
 
-#[derive(Debug, Deserialize, Clone, Default)]
+#[derive(Debug, Deserialize, Serialize, Clone, Default)]
 #[serde(from = "i64")]
 pub enum RequestStatus {
     /// Error occurred while executing the transaction
@@ -96,7 +96,7 @@ impl From<i64> for RequestStatus {
     }
 }
 
-#[derive(Debug, Deserialize, Clone, Default)]
+#[derive(Debug, Deserialize, Serialize, Clone, Default)]
 #[serde(from = "i64")]
 pub enum Period {
     /// 1 minute
