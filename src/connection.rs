@@ -87,15 +87,12 @@ impl Connection {
             };
 
             debug!("Received: {:?}", message);
-            let message = match message {
-                Some(message) => message?,
-                None => return Err(Error::NoDataReceived),
-            };
-
             match message {
-                Message::Text(string) => return Ok(string),
-                Message::Binary(_) | Message::Ping(_) | Message::Pong(_) => continue,
-                Message::Close(_) => return Err(Error::ConnectionClosed),
+                Some(Ok(Message::Text(string))) => return Ok(string),
+                Some(Ok(Message::Binary(_))) | Some(Ok(Message::Ping(_))) | Some(Ok(Message::Pong(_))) => continue,
+                Some(Ok(Message::Close(_))) => return Err(Error::ConnectionClosed),
+                Some(Err(err)) => return Err(Error::WebSocketError(err)),
+                None => return Err(Error::NoDataReceived),
             };
         }
     }

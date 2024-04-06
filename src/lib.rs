@@ -6,6 +6,8 @@ mod error;
 mod socket;
 mod stream;
 
+use std::borrow::Cow;
+
 pub use credentials::Credentials;
 pub use data::*;
 pub use enums::*;
@@ -20,9 +22,9 @@ pub struct XApi {
 }
 
 pub async fn connect(credentials: &Credentials) -> Result<XApi, Error> {
-    let mut host = credentials.host.clone();
+    let mut host = Cow::Borrowed(&credentials.host);
     if !host.starts_with("wss://") && !host.starts_with("ws://") {
-        host.insert_str(0, "wss://");
+        host.to_mut().insert_str(0, "wss://");
     }
 
     let socket_url = format!("{}/{}", &host, &credentials.type_);
