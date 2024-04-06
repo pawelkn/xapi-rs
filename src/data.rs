@@ -173,7 +173,7 @@ pub struct Symbol {
     pub currency: String,
     pub currency_pair: bool,
     pub currency_profit: String,
-    pub description: String,
+    pub description: Option<String>,
     pub expiration: Option<i64>,
     pub group_name: String,
     pub high: f64,
