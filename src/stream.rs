@@ -36,8 +36,8 @@ impl Stream {
     pub async fn get_candles(&self, symbol: &str) -> Result<(), Error> {
         self.conn
             .request(&format!(
-                "{{\"command\":\"getCandles\",\"streamSessionId\":\"{}\",\"symbol\":\"{symbol}\"}}",
-                self.stream_session_id
+                "{{\"command\":\"getCandles\",\"streamSessionId\":\"{}\",\"symbol\":\"{}\"}}",
+                self.stream_session_id, symbol
             ))
             .await
     }
