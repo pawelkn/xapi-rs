@@ -44,7 +44,7 @@ impl Stream {
 
     pub async fn stop_candles(&self, symbol: &str) -> Result<(), Error> {
         self.conn
-            .request(&format!("{{\"command\":\"stopCandles\",\"symbol\":\"{symbol}\"}}"))
+            .request(&format!("{{\"command\":\"stopCandles\",\"symbol\":\"{}\"}}", symbol))
             .await
     }
 
