@@ -6,6 +6,14 @@
 [![Downloads](https://img.shields.io/crates/d/xapi.svg)](https://crates.io/crates/xapi)
 [![license](https://img.shields.io/badge/license-MIT-blue)](https://github.com/pawelkn/xapi-rs/LICENSE)
 
+## ⚠️ DEPRECATION NOTICE
+
+**This library will no longer be functional after March 14, 2025.**
+
+XTB has announced that access to the API service through the hosts `xapi.xtb.com` and `ws.xtb.com` will be discontinued as of March 14, 2025. This means that this library, which relies on these API endpoints, will no longer work.
+
+---
+
 The xStation5 API Rust library provides a simple and easy-to-use API for interacting with the xStation5 trading platform. With this library, you can connect to the xStation5 platform, retrieve market data, and execute trades.
 
 This library may be used for [BFB Capital](https://bfb.capital) and [XTB](https://www.xtb.com) xStation5 accounts.
